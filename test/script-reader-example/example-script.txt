@@ -1,0 +1,30 @@
+# A script contains actions which are executed in sequence
+# Each action consists of a delay (ms), type and parameters [delay],[type],"[parameters]"
+# --- Marks a new script sequence entry, followed by its identifier.
+# A script is ended with another three dashed lines
+# A line beginning with a # marks a comment, and will always be ignored by the interpreter
+# Spaces that are not inside parameter markers will be ignored during interpretation
+# Possible actions are: "press","write","move","hold" and "release"
+# See scripts/execution_api.py and scripts/script_executor.py for a better insight into the available actions
+# Two random example scripts are given below
+# The following example will open a firefox web browser and go to google, searching for cats.
+--- open_firefox
+0,press,"win + r"
+500,write,"firefox"
+0,press,"enter"
+# Maximize
+500,press,"win + up"
+# Mark search bar
+500,press,"ctrl + l"
+100,write,"cats"
+0,press,"enter"
+---
+# The following example will minimize to desktop and mark a large and then smaller area
+--- test_selection
+1000,press,"win + d"
+1000,move,"500,500"
+0,hold_mouse,"left"
+1000,move,"1000,1000"
+500,move,"750,750"
+1000,release_mouse,"left"
+---
