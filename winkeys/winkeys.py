@@ -235,18 +235,18 @@ if os.name == "nt":
         ctypes.windll.user32.SendInput(1, ctypes.byref(c_input), ctypes.sizeof(c_input))
 
 
-    def mouse_move(x: int, y: int, relative: bool) -> bool:
+    def mouse_move(x: float, y: float, relative: bool) -> bool:
         """
         Moves the mouse the given x, y position (in pixels) on the main monitor.
         A relative values means that x, y is treated as dx, dy to the current mouse pointer position.
         """
-        if x < 0 or x > _SCREEN_WIDTH_PX or y < 0 or y > _SCREEN_HEIGHT_PX:
+        if not relative and (x < 0 or y < 0 or x > _SCREEN_WIDTH_PX or y > _SCREEN_HEIGHT_PX):
             return False
         flags = MOUSE_EVENT_MOVE
         if not relative:
             flags |= MOUSE_EVENT_ABSOLUTE
         inp_struct = CInput(ctypes.c_ulong(INPUT_MOUSE),
-                            _CInputUnion(mi=CMouseInput(dx=x * _SCREEN_X_MULTIPLIER, dy=y * _SCREEN_Y_MULTIPLIER,
+                            _CInputUnion(mi=CMouseInput(dx=int(x * _SCREEN_X_MULTIPLIER), dy=int(y * _SCREEN_Y_MULTIPLIER),
                                                         dwFlags=flags)))
         _send_input(inp_struct)
         return True
