@@ -33,7 +33,7 @@
  -----------------------------------------------------------------------------
  TODO: Add support for initial script values (specified by the reserved % tag)
 """
-from typing import Optional, Tuple
+from typing import Union, Tuple
 import os
 import string
 import sys
@@ -51,7 +51,7 @@ class ScriptReader:
         return True
 
     @staticmethod
-    def _remove_obsolete_characters(mark_char: str, rm_chars: Tuple[str, ...], line: str) -> str:
+    def _remove_obsolete_characters(mark_char: str, rm_chars: Union[Tuple[str, ...], str], line: str) -> str:
         """
         Purges a line of text from all rm_char characters that are not inside a group marked by mark_char characters.
         :param mark_char: MUST be of length 1 and only one (Character to match start/end of a group).
@@ -72,7 +72,7 @@ class ScriptReader:
         return output
 
     @staticmethod
-    def load_scripts(filename: str) -> Optional[dict]:
+    def load_scripts(filename: str) -> Union[dict, None]:
         """
         Loads all scripts from the given file located in the same folder or from a sub-folder.
 

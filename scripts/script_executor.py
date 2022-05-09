@@ -27,9 +27,9 @@
  Provides a simple script executor class, which utilizes a ScriptReader and an
  ExecutionAPI to perform scripted actions in a sequence.
 """
-from typing import List, Tuple, Dict, Callable, Any
-from scripts.script_reader import ScriptReader
-from scripts.execution_api import ExecutionAPI
+from typing import List, Tuple, Dict, Callable
+from pyWinKeys.scripts.script_reader import ScriptReader
+from pyWinKeys.scripts.execution_api import ExecutionAPI
 from time import sleep
 import sys
 
@@ -76,6 +76,9 @@ class ScriptExecutor:
             # print("ScriptExecutor-internal_execute: EXECUTING command \'{0}\'".format(command[1]))
             self._commands[command[1]][1](*parameters)
         return True
+
+    def get_script_names(self) -> tuple[str]:
+        return tuple(self.scripts.keys()) if self.scripts is not None else tuple()
 
     def execute(self, script_name: str) -> bool:
         """

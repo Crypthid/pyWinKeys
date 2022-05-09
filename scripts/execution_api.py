@@ -32,7 +32,7 @@
  TODO: Allow scrolling actions to be performed in a script
  TODO: Maybe (?) add keyboard key holding/releasing support
 """
-import winkeys.winkeys as pyw
+import pyWinKeys.winkeys.winkeys as pyw
 import sys
 from typing import Union
 

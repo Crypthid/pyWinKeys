@@ -4,7 +4,7 @@
 
  Simple execution test of script capabilities.
 """
-from scripts.script_executor import ScriptExecutor
+from pyWinKeys.scripts.script_executor import ScriptExecutor
 
 
 def main():
