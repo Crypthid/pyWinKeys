@@ -39,8 +39,6 @@ Does not (really) support:
 
 import os
 
-timeout: int = 5  # ms
-
 if os.name == "nt":
     import ctypes
     import enum
@@ -136,10 +134,15 @@ if os.name == "nt":
     MOUSE_EVENT_VIRTUAL_DESK = 0x4000  # Send this to map mouse events to the entire screen area (multi-monitor)
     MOUSE_EVENT_COORDINATES = 65535  # The amount of coordinates in x and y used by mouse input
 
+    # Screen settings
     _SCREEN_WIDTH_PX: int = 0
     _SCREEN_HEIGHT_PX: int = 0
     _SCREEN_X_MULTIPLIER: int = 0
     _SCREEN_Y_MULTIPLIER: int = 0
+
+    # Timeout (delay) settings
+    _PYWINKEYS_TIMEOUT: int = 5  # ms, keypress timeout
+    _PYWINKEYS_SEQUENCE_DELAY: int = 0  # ms, delay of subsequent keypresses in a keycombo
 
 
     def refresh_monitor_size() -> None:
@@ -160,8 +163,32 @@ if os.name == "nt":
     # Set initial resolution of primary monitor for mouse event mappings
     refresh_monitor_size()
 
+
+    def set_keypress_timeout(delay: int) -> None:
+        """
+        Updates the ms delay between a key hold and release event.
+        :param delay: New delay (in ms)
+        :return: None
+        """
+        global _PYWINKEYS_TIMEOUT
+        if isinstance(delay, int) and delay >= 0:
+            _PYWINKEYS_TIMEOUT = delay
+
+
+    def set_sequence_delay(delay: int) -> None:
+        """
+        Updates the ms delay between a subsequent hold or release event in keypress combo
+        :param delay: New delay (in ms)
+        :return: None
+        """
+        global _PYWINKEYS_SEQUENCE_DELAY
+        if isinstance(delay, int) and delay >= 0:
+            _PYWINKEYS_SEQUENCE_DELAY = delay
+
+
     def get_primary_resolution() -> typing.Tuple[int, int]:
         return _SCREEN_WIDTH_PX, _SCREEN_HEIGHT_PX
+
 
     '''
     Map characters and special keys to the correct VK keys for KeyBdInput
@@ -228,7 +255,8 @@ if os.name == "nt":
 
 
     def _sleep(ms: int) -> None:
-        time.sleep(ms / 1000.0)
+        if ms > 0:
+            time.sleep(ms / 1000.0)
 
 
     def _send_input(c_input: CInput) -> None:
@@ -246,8 +274,9 @@ if os.name == "nt":
         if not relative:
             flags |= MOUSE_EVENT_ABSOLUTE
         inp_struct = CInput(ctypes.c_ulong(INPUT_MOUSE),
-                            _CInputUnion(mi=CMouseInput(dx=int(x * _SCREEN_X_MULTIPLIER), dy=int(y * _SCREEN_Y_MULTIPLIER),
-                                                        dwFlags=flags)))
+                            _CInputUnion(
+                                mi=CMouseInput(dx=int(x * _SCREEN_X_MULTIPLIER), dy=int(y * _SCREEN_Y_MULTIPLIER),
+                                               dwFlags=flags)))
         _send_input(inp_struct)
         return True
 
@@ -285,7 +314,7 @@ if os.name == "nt":
     def mouse_press(mouse_btn: MouseKey) -> bool:
         if not mouse_hold(mouse_btn):
             return False
-        _sleep(timeout)
+        _sleep(_PYWINKEYS_TIMEOUT)
         if not mouse_release(mouse_btn):
             return False
         return True
@@ -338,7 +367,7 @@ if os.name == "nt":
         if key_code is None:
             return False
         _keyboard_hold(key_code)
-        _sleep(timeout)
+        _sleep(_PYWINKEYS_TIMEOUT)
         _keyboard_release(key_code)
         return True
 
@@ -361,10 +390,12 @@ if os.name == "nt":
         # Press in sequence
         for key_code in key_codes:
             _keyboard_hold(key_code)
-        _sleep(timeout)
+            _sleep(_PYWINKEYS_SEQUENCE_DELAY)
+        _sleep(_PYWINKEYS_TIMEOUT)
         # Release in reversed sequence
         for key_code in reversed(key_codes):
             _keyboard_release(key_code)
+            _sleep(_PYWINKEYS_SEQUENCE_DELAY)
         return True
 else:
     raise NotImplementedError("The winkeys API is only support for Windows!")
