@@ -210,6 +210,11 @@ if os.name == "nt":
     _add_sequence_keys(_win_key, ('F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8', 'F9', 'F10',
                                   'F11', 'F12', 'F13', 'F14', 'F15', 'F16', 'F17', 'F18',
                                   'F19', 'F20', 'F21', 'F22', 'F23', 'F24'), 0x70)
+    # Manually add symbols
+    _win_key['+'] = 0xBB
+    _win_key[','] = 0xBC
+    _win_key['-'] = 0xBD
+    _win_key['.'] = 0xBE
     # Manually input special keys
     _win_key['backspace'] = 0x08
     _win_key['tab'] = 0x09
