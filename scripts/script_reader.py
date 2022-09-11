@@ -33,10 +33,10 @@
  -----------------------------------------------------------------------------
  TODO: Add support for initial script values (specified by the reserved % tag)
 """
-from typing import Union, Tuple
 import os
 import string
 import sys
+from typing import Union, Tuple
 
 
 class ScriptReader:

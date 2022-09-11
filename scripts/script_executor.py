@@ -27,11 +27,12 @@
  Provides a simple script executor class, which utilizes a ScriptReader and an
  ExecutionAPI to perform scripted actions in a sequence.
 """
-from typing import List, Tuple, Dict, Callable
-from pyWinKeys.scripts.script_reader import ScriptReader
-from pyWinKeys.scripts.execution_api import ExecutionAPI
-from time import sleep
 import sys
+from time import sleep
+from typing import List, Tuple, Dict, Callable
+
+from pyWinKeys.scripts.execution_api import ExecutionAPI
+from pyWinKeys.scripts.script_reader import ScriptReader
 
 
 class ScriptExecutor:
